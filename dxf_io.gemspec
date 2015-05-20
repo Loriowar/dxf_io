@@ -9,8 +9,12 @@ Gem::Specification.new do |spec|
   spec.authors       = ['Ivan Zabrovskiy']
   spec.email         = ['loriowar@gmail.com']
 
-  spec.summary       = %q{TODO: Write a short summary, because Rubygems requires one.}
-  spec.description   =  spec.summary
+  spec.summary       = %q{Gem for read and write DXF files}
+  spec.description   =  <<-STRING
+                          Gem for read and write DXF files.
+                          Gem based on "ruby-dxf-reader" from https://github.com/jimfoltz/ruby-dxf-reader.
+                          It support DXF files comes from AutoCAD 2008 (http://images.autodesk.com/adsk/files/acad_dxf0.pdf).
+                        STRING
   spec.homepage      = "TODO: Put your gem's website or public repo URL here."
   spec.license       = 'MIT'
 
@@ -22,6 +26,8 @@ Gem::Specification.new do |spec|
   if spec.respond_to?(:metadata)
     #spec.metadata['allowed_push_host'] = "TODO: Set to 'http://mygemserver.com' to prevent pushes to rubygems.org, or delete to allow pushes to any server."
   end
+
+  spec.add_dependency 'activesupport', '>= 3.2'
 
   spec.add_development_dependency 'bundler', '~> 1.9'
   spec.add_development_dependency 'rake', '~> 10.0'

@@ -1,5 +1,8 @@
 require 'dxf_io/version'
 
 module DxfIO
-  # Your code goes here...
+  extend ActiveSupport::Autoload
+
+  autoload :Reader
+  autoload :Writer
 end
