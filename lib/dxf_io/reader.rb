@@ -29,6 +29,9 @@ module DxfIO
       @result_hash ||= parse
     end
 
+    alias to_hash run
+    alias to_h run
+
     def rerun
       @result_hash = parse
     end
