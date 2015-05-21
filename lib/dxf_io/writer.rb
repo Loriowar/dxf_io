@@ -114,14 +114,8 @@ module DxfIO
 
     def other_section_content(variables)
       variables.inject('') do |result, groups|
-        result << groups.inject('') do |group_result, (group, value)|
-          if value.is_a? Array
-            value.inject(group_result) do |h, group_value|
-              h << "#{group}#{@delimiter}#{try_to_upcase_exponent(group_value)}#{@delimiter}"
-            end
-          else
-            group_result << "#{group}#{@delimiter}#{try_to_upcase_exponent(value)}#{@delimiter}"
-          end
+        result << groups.inject('') do |group_result, group|
+          group_result << "#{group.keys.first}#{@delimiter}#{try_to_upcase_exponent(group.values.first)}#{@delimiter}"
         end
       end
     end

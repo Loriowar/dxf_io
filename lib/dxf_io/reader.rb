@@ -80,32 +80,16 @@ module DxfIO
   private
 
     def parse_entities(section, fp)
-      last_ent = nil
-      last_code = nil
       while true
         c, v = read_codes(fp)
-        break if v == 'ENDSEC' or v == 'EOF'
+        break if v == 'ENDSEC' || v == 'EOF'
         next if c == 999
-        # LWPOLYLINE seems to break the rule that we can ignore the order of codes.
-        if last_ent == 'LWPOLYLINE'
-          if c == 10
-            section[-1][42] ||= []
-            # Create default 42
-            add_att(section[-1], 42, 0.0)
-          end
-          if c == 42
-            # update default
-            section[-1][42][-1] = v
-            next
-          end
-        end
+
         if c == 0
-          last_ent = v
-          section << {c => v}
+          section << [c => v]
         else
-          add_att(section[-1], c, v)
+          section[-1] << {c => v}
         end
-        last_code = c
       end # while
     end
 
@@ -128,13 +112,6 @@ module DxfIO
     end
 
     def add_att(ent, code, value)
-      # Initially, I thought each code mapped to a single value. Turns out
-      # a code can be a list of values.
-      if ent.nil? && $JFDEBUG
-        p caller
-        p code
-        p value
-      end
       if ent[code].nil?
         ent[code] = value
       elsif ent[code].is_a? Array
