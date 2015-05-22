@@ -62,6 +62,14 @@ module DxfIO
         end
       end
 
+      def xs
+        points.collect(&:x)
+      end
+
+      def ys
+        points.collect(&:y)
+      end
+
     private
 
       # checking  types of coordinate
