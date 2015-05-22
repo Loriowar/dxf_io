@@ -3,5 +3,6 @@ module DxfIO
     extend ActiveSupport::Autoload
 
     autoload :Other
+    autoload :Support
   end
 end
