@@ -15,7 +15,7 @@ Gem::Specification.new do |spec|
                           Gem based on "ruby-dxf-reader" from https://github.com/jimfoltz/ruby-dxf-reader.
                           It support DXF files comes from AutoCAD 2008 (http://images.autodesk.com/adsk/files/acad_dxf0.pdf).
                         STRING
-  spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+  spec.homepage      = 'https://github.com/Loriowar/dxf_io'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
