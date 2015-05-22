@@ -2,7 +2,8 @@ module DxfIO
   # based on DXF AutoCAD 2008 documentation (http://images.autodesk.com/adsk/files/acad_dxf0.pdf)
   class Reader
 
-    SECTIONS_LIST = %w(CLASSES TABLES BLOCKS ENTITIES OBJECTS THUMBNAILIMAGES).freeze
+    SECTIONS_LIST = DxfIO::Constants::SECTIONS_LIST
+    HEADER_NAME = DxfIO::Constants::HEADER_NAME
 
     def initialize(options)
       if options.is_a? String
@@ -17,7 +18,7 @@ module DxfIO
       end
     end
 
-    (['HEADER'] + SECTIONS_LIST).each do |method|
+    ([HEADER_NAME] + SECTIONS_LIST).each do |method|
       class_eval <<-EOT, __FILE__, __LINE__ + 1
         def #{method.downcase}       # def classes
           run['#{method}']           #   run['CLASSES']
@@ -39,7 +40,7 @@ module DxfIO
     def parse(filename = @filename, encoding = @encoding)
       read_flag = "r:#{encoding}:UTF-8"
       fp = File.open(filename, read_flag)
-      dxf = {'HEADER' => {}}
+      dxf = {HEADER_NAME => {}}
       SECTIONS_LIST.each do |section_name|
         dxf[section_name] = []
       end
@@ -52,8 +53,8 @@ module DxfIO
           break if v == 'EOF'
           if v == 'SECTION'
             c, v = read_codes(fp)
-            if v == 'HEADER'
-              hdr = dxf['HEADER']
+            if v == HEADER_NAME
+              hdr = dxf[HEADER_NAME]
               while true
                 c, v = read_codes(fp)
                 break if v == 'ENDSEC' # or v == "BLOCKS" or v == "ENTITIES" or v == "EOF"

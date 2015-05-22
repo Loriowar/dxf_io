@@ -2,8 +2,9 @@ module DxfIO
   class Writer
     require 'fileutils'
 
-    SECTIONS_LIST = %w(CLASSES TABLES BLOCKS ENTITIES OBJECTS THUMBNAILIMAGES).freeze
-    STRATEGY = %i(memory disk).freeze
+    SECTIONS_LIST = DxfIO::Constants::SECTIONS_LIST
+    HEADER_NAME = DxfIO::Constants::HEADER_NAME
+    STRATEGY = DxfIO::Constants::WRITER_STRATEGY
 
     def initialize(options)
       if options[:dxf_hash].present? && options[:path].present?
@@ -81,7 +82,7 @@ module DxfIO
     # helpers
 
     def header_section?(section_name)
-      section_name.downcase == 'header'
+      section_name.upcase == HEADER_NAME
     end
 
     # wrappers
@@ -101,7 +102,7 @@ module DxfIO
     #   0
     #   SECTION
     #   2
-    #   HEADER
+    #   <section_name>
     #   ... section content ...
     #   0
     #   ENDSEC
@@ -128,6 +129,9 @@ module DxfIO
       end
     end
 
+    # other section format:
+    #   <group code>
+    #   <value>
     def other_section_wrap(fp, variables)
       variables.each do |groups|
         groups.each do |group|
