@@ -4,5 +4,18 @@ module DxfIO
     HEADER_NAME = 'HEADER'.freeze
 
     WRITER_STRATEGY = %i(memory disk).freeze
+
+    ENTITIES_TYPE_NAME_VALUE_MAPPING = {ellipse: 'ELLIPSE',
+                                        polyline: 'LWPOLYLINE',
+                                        arc: 'ARC',
+                                        circle: 'CIRCLE',
+                                        dimension: 'DIMENSION',
+                                        hatch: 'HATCH',
+                                        leader: 'LEADER',
+                                        line: 'LINE',
+                                        mline: 'MLINE',
+                                        text: 'TEXT',
+                                        mtext: 'MTEXT',
+                                        spline: 'SPLINE'}.freeze
   end
 end

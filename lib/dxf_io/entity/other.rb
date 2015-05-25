@@ -13,18 +13,9 @@ module DxfIO
       X_COORDINATE_GROUP_NUMS = [10, 11].freeze
       Y_COORDINATE_GROUP_NUMS = [20, 21].freeze
 
-      TYPE_NAME_VALUE_MAPPING = {ellipse: 'ELLIPSE',
-                                 polyline: 'LWPOLYLINE',
-                                 arc: 'ARC',
-                                 circle: 'CIRCLE',
-                                 dimension: 'DIMENSION',
-                                 hatch: 'HATCH',
-                                 leader: 'LEADER',
-                                 line: 'LINE',
-                                 mline: 'MLINE',
-                                 text: 'TEXT',
-                                 mtext: 'MTEXT',
-                                 spline: 'SPLINE'}.freeze
+      TYPE_NAME_VALUE_MAPPING = DxfIO::Constants::ENTITIES_TYPE_NAME_VALUE_MAPPING
+
+      GROUP_CODES = {type: 0}.freeze
 
       def initialize(groups)
         if groups.is_a? Array
@@ -35,18 +26,19 @@ module DxfIO
       end
 
       def to_h
-        @groups.inject({}) do |h, group|
-          group_value = group.values.first
-          group_values = h[group.keys.first]
-          if group_values.nil?
-            h[group.keys.first] = group_value
-          elsif group_values.is_a? Array
-            h[group.keys.first] << group_value
-          else
-            h[group.keys.first] = [group_values, group_value]
-          end
-          h
-        end
+        @representation_hash ||=
+            @groups.inject({}) do |h, group|
+              group_value = group.values.first
+              group_values = h[group.keys.first]
+              if group_values.nil?
+                h[group.keys.first] = group_value
+              elsif group_values.is_a? Array
+                h[group.keys.first] << group_value
+              else
+                h[group.keys.first] = [group_values, group_value]
+              end
+              h
+            end
       end
 
       alias to_hash to_h
@@ -55,16 +47,23 @@ module DxfIO
         @groups
       end
 
-      def type
-        # zero group define type of a object
-        to_h[0]
+      GROUP_CODES.each_pair do |method_name, group_code|
+        class_eval <<-EOT, __FILE__, __LINE__ + 1
+          def #{method_name}                       # def type
+            to_h[#{group_code}]                    #   to_h[0]
+          end                                      # end
+        EOT
       end
 
       TYPE_NAME_VALUE_MAPPING.each_pair do |method_name, type_value|
         class_eval <<-EOT, __FILE__, __LINE__ + 1
-          def #{method_name}?                       # def ellipse?
-            type == '#{type_value}'                 #   type == 'ELLIPSE'
-          end                                       # end
+          def #{method_name}?                                             # def ellipse?
+            type == '#{type_value}'                                       #   type == 'ELLIPSE'
+          end                                                             # end
+
+          def to_#{method_name}                                           # def to_ellise
+            DxfIO::Entity::#{method_name.capitalize}.new(@groups, to_h)   #   DxfIO::Entity::Ellipse.new(@groups, to_h)
+          end                                                             # end
         EOT
       end
 
@@ -79,8 +78,12 @@ module DxfIO
           else
             result
           end
-
         end
+      end
+
+      # redefined in subclasses
+      def bordering_points
+        points
       end
 
       def xs

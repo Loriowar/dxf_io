@@ -5,7 +5,7 @@ module DxfIO
 
         TYPES = %i(start end).freeze
 
-        attr_reader :x, :y
+        attr_reader :x, :y, :type
 
         def initialize(x, y, options = {})
           @x, @y = x, y
@@ -19,6 +19,81 @@ module DxfIO
         def end?
           @type == :end
         end
+
+        def to_a
+          [@x, @y]
+        end
+
+        def to_h
+          {x: @x, y: @y}
+        end
+
+        # eq operations
+
+        def ==(point)
+          to_a == point.to_a
+        end
+
+        # math operations
+
+        def +(point)
+          if point.is_a? self.class
+            self.class.new(@x + point.x,
+                           @y + point.y,
+                           type: @type == point.type ? @type : :start)
+          elsif point.is_a? Array
+            self.class.new(@x + point[0],
+                           @y + point[1],
+                           type: @type)
+          else
+            raise ArgumentError, 'point must be an Array or a DxfIO::Entity::Support::Point'
+          end
+        end
+
+        def -(point)
+          if point.is_a? self.class
+            self.class.new(@x - point.x,
+                           @y - point.y,
+                           type: @type == point.type ? @type : :start)
+          elsif point.is_a? Array
+            self.class.new(@x - point[0],
+                           @y - point[1],
+                           type: @type)
+          else
+            raise ArgumentError, 'point must be an Array or a DxfIO::Entity::Support::Point'
+          end
+        end
+
+        def *(num)
+          if num.is_a? Numeric
+            self.class.new(@x * num,
+                           @y * num,
+                           type: @type)
+          else
+            raise ArgumentError, 'argument must be Numeric'
+          end
+        end
+
+        def /(num)
+          if num.is_a? Numeric
+            self.class.new(@x / num,
+                           @y / num,
+                           type: @type)
+          else
+            raise ArgumentError, 'argument must be Numeric'
+          end
+        end
+
+        # geometrical operation (supposed point is a vector from zero)
+
+        def rotate_90
+          self.class.new(@y, -@x, type: @type)
+        end
+
+        def rotate_180
+          self.class.new(-@x, -@y, type: @type)
+        end
+
       end
     end
   end
