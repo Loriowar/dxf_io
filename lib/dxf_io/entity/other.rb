@@ -13,6 +13,19 @@ module DxfIO
       X_COORDINATE_GROUP_NUMS = [10, 11].freeze
       Y_COORDINATE_GROUP_NUMS = [20, 21].freeze
 
+      TYPE_NAME_VALUE_MAPPING = {ellipse: 'ELLIPSE',
+                                 polyline: 'LWPOLYLINE',
+                                 arc: 'ARC',
+                                 circle: 'CIRCLE',
+                                 dimension: 'DIMENSION',
+                                 hatch: 'HATCH',
+                                 leader: 'LEADER',
+                                 line: 'LINE',
+                                 mline: 'MLINE',
+                                 text: 'TEXT',
+                                 mtext: 'MTEXT',
+                                 spline: 'SPLINE'}.freeze
+
       def initialize(groups)
         if groups.is_a? Array
           @groups = groups
@@ -45,6 +58,14 @@ module DxfIO
       def type
         # zero group define type of a object
         to_h[0]
+      end
+
+      TYPE_NAME_VALUE_MAPPING.each_pair do |method_name, type_value|
+        class_eval <<-EOT, __FILE__, __LINE__ + 1
+          def #{method_name}?                       # def ellipse?
+            type == '#{type_value}'                 #   type == 'ELLIPSE'
+          end                                       # end
+        EOT
       end
 
       def points
