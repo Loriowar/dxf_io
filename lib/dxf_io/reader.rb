@@ -18,6 +18,16 @@ module DxfIO
       end
     end
 
+    class << self
+      def open(options)
+        self.new(options).tap do |reader_instance|
+          if block_given?
+            yield reader_instance
+          end
+        end
+      end
+    end
+
     ([HEADER_NAME] + SECTIONS_LIST).each do |method|
       class_eval <<-EOT, __FILE__, __LINE__ + 1
         def #{method.downcase}       # def classes

@@ -6,10 +6,14 @@ module DxfIO
     ENTITIES_TYPE_NAME_VALUE_MAPPING = DxfIO::Constants::ENTITIES_TYPE_NAME_VALUE_MAPPING
 
     def initialize(options)
-      if options[:dxf_hash].present?
-        @dxf_hash = options[:dxf_hash]
+      if options.is_a? Hash
+        if options[:dxf_hash].nil?
+          @dxf_hash = options
+        else
+          @dxf_hash = options[:dxf_hash]
+        end
       else
-        raise ArgumentError, 'options must contain :dxf_hash key'
+        raise ArgumentError, 'options must be a Hash'
       end
     end
 

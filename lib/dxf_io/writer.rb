@@ -7,23 +7,42 @@ module DxfIO
     STRATEGY = DxfIO::Constants::WRITER_STRATEGY
 
     def initialize(options)
-      if options[:dxf_hash].present? && options[:path].present?
-        @dxf_hash = options[:dxf_hash]
-        @filename = options[:path]
+      # TODO: replace instance variables to hash with options
+      # default options
+      @encoding = 'Windows-1251'
+      @delimiter = "\r\n"
+      @strategy = STRATEGY.first
+      @dxf_hash = {}
+
+      if options.is_a? String
+        @filename = options
+      elsif options.is_a? Hash
+        @dxf_hash = options[:dxf_hash] if options.has_key? :dxf_hash
+        @filename = options[:path] if options.has_key? :path
+        @encoding = options[:encoding] if options.has_key? :encoding
+        @delimiter = options[:delimiter] if options.has_key? :delimiter
+        @strategy = options[:strategy] if options.has_key? :strategy && STRATEGY.include?(options[:strategy])
       else
-        raise ArgumentError, 'options must contain :dxf_hash and :path keys'
+        raise ArgumentError, 'options must be String or Hash with :path key'
       end
-      @encoding = options[:encoding] || 'Windows-1251'
-      @delimiter = options[:delimiter] || "\r\n"
-      @strategy = STRATEGY.include?(options[:strategy]) ? options[:strategy] : STRATEGY.first
+    end
+
+    class << self
+      def open(options)
+        self.new(options).tap do |writer_instance|
+          if block_given?
+            yield writer_instance
+          end
+        end
+      end
     end
 
     # construct dxf content in memory and write all in file at once
-    def write_through_memory
+    def write_through_memory(dxf_hash = @dxf_hash)
       file_stream do |fp|
         fp.write(
             file_content do
-              @dxf_hash.inject('') do |sections_content, (section_name, section_content)|
+              dxf_hash.inject('') do |sections_content, (section_name, section_content)|
                 sections_content << section_wrapper_content(section_name) do
                   if header_section?(section_name)
                     header_content(section_content)
@@ -38,10 +57,10 @@ module DxfIO
     end
 
     # write dxf file directly on disk without temporary usage of memory for content
-    def write_through_disk
+    def write_through_disk(dxf_hash = @dxf_hash)
       file_stream do |fp|
         file_wrap(fp) do
-          @dxf_hash.each_pair do |section_name, section_content|
+          dxf_hash.each_pair do |section_name, section_content|
             section_wrap(fp, section_name) do
               if header_section?(section_name)
                 header_wrap(fp, section_content)
@@ -54,15 +73,17 @@ module DxfIO
       end
     end
 
-    def run
+    def run(dxf_hash = @dxf_hash)
       if @strategy == :memory
-        write_through_memory
+        write_through_memory(dxf_hash)
       elsif @strategy == :disk
-        write_through_disk
+        write_through_disk(dxf_hash)
       else
         raise ArgumentError, ':strategy has invalid value; allowed only [:memory, :disk]'
       end
     end
+
+    alias write_hash run
 
   private
 

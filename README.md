@@ -34,6 +34,16 @@ Reader can be initialized as follows:
 reader_instance = DxfIO::Reader.new(path: '/path/to/your/file.dxf')
 ```
 
+Additionally you can use `open` method:
+
+```ruby
+DxfIO::Reader.open('/path/to/your/file.dxf') do |dxf_reader_instance|
+  # ...
+end
+```
+
+`open` receive same options as `new`.
+
 Available options of __Reader__:
 
 * path - path to DXF-file (required)
@@ -127,9 +137,20 @@ writer_instance = DxfIO::Writer.new(dxf_hash: dxf_content, path: '/path/to/new/f
 
 To process write execute `writer_instance.run`.
 
+Alternative way to use __Writer__:
+
+```ruby
+writer_instance = DxfIO::Writer.open('/path/to/new/file.dxf') do |dxf_writer_instance|
+  # ...
+  dxf_writer_instance.write_hash dxf_hash
+end
+```
+
+`open` receive same options as `new`.
+
 Available options of __Writer__:
 
-* dxf_hash - hash with DXF-file in format of __Reader__ (required)
+* dxf_hash - hash with DXF-file in format of __Reader__ (required in `new` or in `run`/`write_hash` methods)
 * path - path to new DXF-file (required)
 * encoding - encoding of output file (`'Windows-1251'` by default)
 * delimiter - delimiter in DXF-file (`"\r\n"` by default)
@@ -182,6 +203,9 @@ This is a simple class for storage 2D points. It provide follows methods:
 * y - access to Y-coordinate
 * start? - is this start-point of primitive (codes 10 and 20 from [dxf-specification](http://images.autodesk.com/adsk/files/acad_dxf0.pdf))
 * end? - is this end-point of primitive (codes 11 and 21 from [dxf-specification](http://images.autodesk.com/adsk/files/acad_dxf0.pdf))
+* `==`
+* `+`, `-`, `*`, `/`
+* `rotate_90`, `rotate_180` (supposed what point is a vector from zero)
 
 ## Development
 

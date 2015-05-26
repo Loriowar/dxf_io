@@ -94,6 +94,23 @@ module DxfIO
         points.collect(&:y)
       end
 
+      # is entity a rectangle figure without rotation
+      def frame?
+        if points.count < 4
+          false
+        else
+          ((points[0].x == points[3].x) && (points[1].x == points[2].x) &&
+           (points[0].y == points[1].y) && (points[2].y == points[3].y)) ||
+          ((points[0].y == points[3].y) && (points[1].y == points[2].y) &&
+           (points[0].x == points[1].x) && (points[2].x == points[3].x))
+          # Alternative checking
+          # points[1..-1].each.with_index.inject(true) do |result, (point, index)|
+          #   # TODO: need additionally checking on periodical alternation and on direction (clockwise or counter-clockwise)
+          #   result && point != points[index] && (point.x == points[index].x || point.y == points[index].y)
+          # end
+        end
+      end
+
     private
 
       # checking  types of coordinate
