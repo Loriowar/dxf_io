@@ -8,10 +8,11 @@ module DxfIO
       # end point:
       #   x coordinate - 11
       #   y coordinate - 21
-      START_POINT_GROUP_NUMS = [10, 20].freeze
-      END_POINT_GROUP_NUMS = [11, 21].freeze
+      START_POINT_GROUP_NUMS = DxfIO::Constants::START_POINT_GROUP_NUMS
+      END_POINT_GROUP_NUMS = DxfIO::Constants::END_POINT_GROUP_NUMS
       X_COORDINATE_GROUP_NUMS = [10, 11].freeze
       Y_COORDINATE_GROUP_NUMS = [20, 21].freeze
+      Z_COORDINATE_GROUP_NUMS = [30, 31].freeze
 
       TYPE_NAME_VALUE_MAPPING = DxfIO::Constants::ENTITIES_TYPE_NAME_VALUE_MAPPING
 
@@ -111,7 +112,36 @@ module DxfIO
         end
       end
 
+      # math operations
+
+      # add point to each point onto current entity
+      def +(point)
+        @groups.each do |group|
+          if x_coordinate?(group)
+            group[group.keys.first] = group.values.first + point.x
+          elsif y_coordinate?(group)
+            group[group.keys.first] = group.values.first + point.y
+          end
+        end
+      end
+
+      def -(point)
+        self + (-point)
+      end
+
     private
+
+      # @warning experimental method
+      def points=(new_points)
+        # firstly remove all points from group
+        @groups.delete_if do |group|
+          (X_COORDINATE_GROUP_NUMS +
+           Y_COORDINATE_GROUP_NUMS +
+           Z_COORDINATE_GROUP_NUMS).include? group.keys.first
+        end
+        # secondary insert new points into @groups
+        @groups += new_points.collect(&:to_dxf_array)
+      end
 
       # checking  types of coordinate
 

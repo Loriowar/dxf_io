@@ -192,6 +192,7 @@ Each __Entity__ has follows methods
 * points - array of __Points__ which is `DxfIO::Entity::Support::Point`
 * xs - array of X-coordinates
 * ys - array of Y-coordinates
+* `+` and `-` with __Point__
 
 ### Support
 
@@ -204,7 +205,8 @@ This is a simple class for storage 2D points. It provide follows methods:
 * start? - is this start-point of primitive (codes 10 and 20 from [dxf-specification](http://images.autodesk.com/adsk/files/acad_dxf0.pdf))
 * end? - is this end-point of primitive (codes 11 and 21 from [dxf-specification](http://images.autodesk.com/adsk/files/acad_dxf0.pdf))
 * `==`
-* `+`, `-`, `*`, `/`
+* binary `+`, `-`, `*`, `/`
+* unary `-`
 * `rotate_90`, `rotate_180` (supposed what point is a vector from zero)
 
 ## Development

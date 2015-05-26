@@ -5,6 +5,9 @@ module DxfIO
 
     WRITER_STRATEGY = %i(memory disk).freeze
 
+    START_POINT_GROUP_NUMS = [10, 20].freeze
+    END_POINT_GROUP_NUMS = [11, 21].freeze
+
     ENTITIES_TYPE_NAME_VALUE_MAPPING = {ellipse: 'ELLIPSE',
                                         polyline: 'LWPOLYLINE',
                                         arc: 'ARC',
