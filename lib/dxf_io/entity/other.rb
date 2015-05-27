@@ -82,10 +82,26 @@ module DxfIO
         end
       end
 
+      # overall dimensions functions
+
       # redefined in subclasses
       def bordering_points
         points
       end
+
+      def left_down_point
+        DxfIO::Entity::Support::Point.new(bordering_xs.min, bordering_ys.min)
+      end
+
+      def height
+        (bordering_ys.max - bordering_ys.min).abs
+      end
+
+      def width
+        (bordering_xs.max - bordering_xs.min).abs
+      end
+
+      # coordinates functions
 
       def xs
         points.collect(&:x)
@@ -94,6 +110,16 @@ module DxfIO
       def ys
         points.collect(&:y)
       end
+
+      def bordering_xs
+        bordering_points.collect(&:x)
+      end
+
+      def bordering_ys
+        bordering_points.collect(&:y)
+      end
+
+      # other properties functions
 
       # is entity a rectangle figure without rotation
       def frame?
