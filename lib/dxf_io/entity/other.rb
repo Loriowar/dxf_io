@@ -112,21 +112,37 @@ module DxfIO
         end
       end
 
-      # math operations
+      # moving operations
 
-      # add point to each point onto current entity
-      def +(point)
-        @groups.each do |group|
-          if x_coordinate?(group)
-            group[group.keys.first] = group.values.first + point.x
-          elsif y_coordinate?(group)
-            group[group.keys.first] = group.values.first + point.y
+      # clear alternative for "+" method
+      # move all points of Entity on specified vector
+      def move_to!(point)
+        if point.is_a? DxfIO::Entity::Support::Point
+          @groups.each do |group|
+            if x_coordinate?(group)
+              group[group.keys.first] = group.values.first + point.x
+            elsif y_coordinate?(group)
+              group[group.keys.first] = group.values.first + point.y
+            end
           end
+        else
+          raise ArgumentError, 'argument must be a DxfIO::Entity::Support::Point'
         end
       end
 
+      # math operations
+
+      # add point to each point onto current entity
+      # @warning operator modify current object
+      alias + move_to!
+
+      # @warning operator modify current object
       def -(point)
-        self + (-point)
+        if point.is_a? DxfIO::Entity::Support::Point
+          self + (-point)
+        else
+          raise ArgumentError, 'argument must be a DxfIO::Entity::Support::Point'
+        end
       end
 
     private

@@ -192,7 +192,7 @@ Each __Entity__ has follows methods
 * points - array of __Points__ which is `DxfIO::Entity::Support::Point`
 * xs - array of X-coordinates
 * ys - array of Y-coordinates
-* `+` and `-` with __Point__
+* move_to! - receive __Point__ and move all points of current __Entity__
 
 ### Support
 
