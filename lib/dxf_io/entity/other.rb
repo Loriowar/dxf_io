@@ -217,7 +217,7 @@ module DxfIO
 
       # reject invalid sequences of coordinate groups
       def validate_point_groups(groups)
-        groups[1..-1].each.with_index.inject([]) do |result, (group, index)|
+        groups[1..-1].to_a.each.with_index.inject([]) do |result, (group, index)|
           if y_coordinate?(group)
             if x_coordinate?(groups[index]) &&
                 ( (start_point?(group) && start_point?(groups[index])) ||
