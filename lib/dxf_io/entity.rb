@@ -2,6 +2,9 @@ module DxfIO
   module Entity
     extend ActiveSupport::Autoload
 
+    autoload :Support
+    autoload :Other
+
     autoload :Ellipse
     autoload :Polyline
     autoload :Arc
@@ -14,8 +17,5 @@ module DxfIO
     autoload :Text
     autoload :Mtext
     autoload :Spline
-
-    autoload :Other
-    autoload :Support
   end
 end
